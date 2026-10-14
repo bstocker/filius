@@ -32,7 +32,7 @@ routeur, routage, protocoles SMTP/POP3, couches TCP/IP) à l'aide du simulateur
 3. Dans le terminal du Codespace, lancer la session Linux Kali :
 
    ```bash
-   docker run --rm -it --shm-size=512m --user root -p 6901:6901 -e VNC_PW=password kasmweb/core-kali-rolling:1.17.0
+   docker run --rm -it --shm-size=512m --user root --security-opt seccomp=unconfined -p 6901:6901 -e VNC_PW=password kasmweb/core-kali-rolling:1.17.0
    ```
 
    Le premier lancement prend quelques minutes (téléchargement de l'image Kali).
@@ -129,6 +129,7 @@ Puis dans Filius : **Ouvrir** → dossier `filius` de votre répertoire personne
 | L'onglet ne s'ouvre pas | Autoriser les popups pour `app.github.dev`, ou onglet **PORTS** → 🌐 sur la ligne 6901. |
 | Erreur **502 Bad Gateway** | Le port est en HTTP : onglet **PORTS** → clic droit sur 6901 → *Change Port Protocol* → **HTTPS**. |
 | Le port 6901 n'apparaît pas | Kali n'a pas fini de démarrer : attendre, ou vérifier que la commande `docker run` tourne toujours. |
+| Écran noir avec seulement le panneau KasmVNC | Le bureau n'a pas démarré : arrêter Kali (`Ctrl+C`) et relancer la commande `docker run` **avec** l'option `--security-opt seccomp=unconfined`. |
 | « Page indisponible » | Le terminal du `docker run` a été fermé : relancer la commande `docker run`. |
 | `apt-get` refuse de s'exécuter (permission) | Taper `su` puis relancer la commande. |
 | Filius n'apparaît pas dans *Applications* | Fermer puis rouvrir le menu *Applications*, ou rechercher « Filius ». |
