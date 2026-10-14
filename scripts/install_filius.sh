@@ -3,8 +3,9 @@
 # A lancer en root : taper d'abord `su` dans le terminal Kali.
 set -euo pipefail
 
-FILIUS_VERSION="2.9.4"
-FILIUS_DEB="filius_${FILIUS_VERSION}_all.deb"
+# Version utilisée si la détection de la dernière version échoue.
+FILIUS_FALLBACK_VERSION="2.14.0"
+FILIUS_DOWNLOAD_PAGE="https://www.lernsoftware-filius.de/Herunterladen"
 
 if [ "$(id -u)" -ne 0 ]; then
   echo "Ce script doit être lancé en root : tapez d'abord 'su' puis relancez-le." >&2
@@ -24,6 +25,11 @@ EOF
 echo "==> Installation de Java et git"
 apt-get update
 apt-get install -y default-jre git
+
+# Le site ne garde que la dernière version : on la lit sur la page de téléchargement.
+FILIUS_VERSION="$(curl -fsSL "$FILIUS_DOWNLOAD_PAGE" | grep -oE 'filius_[0-9.]+_all\.deb' | head -n 1 | sed -E 's/filius_(.*)_all\.deb/\1/' || true)"
+FILIUS_VERSION="${FILIUS_VERSION:-$FILIUS_FALLBACK_VERSION}"
+FILIUS_DEB="filius_${FILIUS_VERSION}_all.deb"
 
 echo "==> Téléchargement et installation de Filius ${FILIUS_VERSION}"
 curl -fL -o "/tmp/${FILIUS_DEB}" "https://www.lernsoftware-filius.de/downloads/Setup/${FILIUS_DEB}"

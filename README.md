@@ -62,7 +62,7 @@ curl -fsSL https://raw.githubusercontent.com/bstocker/filius/main/scripts/instal
 <summary>Installation manuelle (si le script ne fonctionne pas)</summary>
 
 ```bash
-curl -L -O "https://www.lernsoftware-filius.de/downloads/Setup/filius_2.9.4_all.deb"
+curl -L -O "https://www.lernsoftware-filius.de/downloads/Setup/filius_2.14.0_all.deb"
 
 apt-get install -y gnupg curl ca-certificates
 
@@ -76,10 +76,11 @@ EOF
 
 apt update
 apt install -y default-jre git
-apt install ./filius_2.9.4_all.deb
+apt install ./filius_2.14.0_all.deb
 ```
 
-Répondre `Y` si une confirmation est demandée.
+Répondre `Y` si une confirmation est demandée. Si le fichier `.deb` est introuvable, la version a changé :
+prendre le lien du paquet Debian sur https://www.lernsoftware-filius.de/Herunterladen.
 
 </details>
 
