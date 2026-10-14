@@ -16,14 +16,11 @@ routeur, routage, protocoles SMTP/POP3, couches TCP/IP) à l'aide du simulateur
 
 ```
 .
-├── .devcontainer/               ← configuration du Codespace (ouverture du port 6080)
+├── .devcontainer/               ← configuration du Codespace (ouverture du port 6901 en HTTPS)
 ├── README.md                    ← vous êtes ici
 ├── docs/
 │   └── Atelier_Filius.pdf       ← énoncé de l'atelier (5 exercices)
-├── exercice4_ressources.fls     ← réseau de départ de l'exercice 4
-└── scripts/
-    ├── start_kali.sh            ← démarrage de la session Linux Kali
-    └── install_filius.sh        ← installation de Filius dans la session Kali
+└── exercice4_ressources.fls     ← réseau de départ de l'exercice 4
 ```
 
 ---
@@ -35,13 +32,14 @@ routeur, routage, protocoles SMTP/POP3, couches TCP/IP) à l'aide du simulateur
 3. Dans le terminal du Codespace, lancer la session Linux Kali :
 
    ```bash
-   bash scripts/start_kali.sh
+   docker run --rm -it --shm-size=512m --user root -p 6901:6901 -e VNC_PW=password kasmweb/core-kali-rolling:1.17.0
    ```
 
    Le premier lancement prend quelques minutes (téléchargement de l'image Kali).
-4. Quand le script affiche **« Session Kali prête »**, ouvrir l'adresse indiquée (elle se termine
-   par `-6080.app.github.dev`). Le port **6080** peut aussi s'ouvrir tout seul dans un nouvel onglet
-   (attention aux bloqueurs de popup), ou depuis l'onglet **PORTS** → icône 🌐 sur la ligne 6080.
+   **Ne pas fermer ce terminal** : la session Kali s'arrête si la commande est interrompue.
+4. Quand le port **6901** apparaît, il s'ouvre dans un nouvel onglet (attention aux bloqueurs de
+   popup). Sinon : onglet **PORTS** → icône 🌐 sur la ligne 6901. L'adresse se termine par
+   `-6901.app.github.dev`.
 5. Se connecter avec l'utilisateur `kasm_user` et le mot de passe `password`.
 
 ## 2. Installer Filius
@@ -52,37 +50,35 @@ Dans le **Terminal** de la session Linux Kali, passer en root :
 su
 ```
 
-Puis lancer le script d'installation :
+Puis taper les commandes suivantes, une par une.
+
+Mettre à jour la clé du dépôt Kali :
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/bstocker/filius/main/scripts/install_filius.sh | bash
-```
-
-<details>
-<summary>Installation manuelle (si le script ne fonctionne pas)</summary>
-
-```bash
-curl -L -O "https://www.lernsoftware-filius.de/downloads/Setup/filius_2.14.0_all.deb"
-
 apt-get install -y gnupg curl ca-certificates
-
 mkdir -p /etc/apt/keyrings
 curl -fsSL https://archive.kali.org/archive-key.asc | gpg --dearmor -o /etc/apt/keyrings/kali-archive-keyring.gpg
 chmod 644 /etc/apt/keyrings/kali-archive-keyring.gpg
-
-cat > /etc/apt/sources.list <<'EOF'
-deb [signed-by=/etc/apt/keyrings/kali-archive-keyring.gpg] http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware
-EOF
-
-apt update
-apt install -y default-jre git
-apt install ./filius_2.14.0_all.deb
+echo "deb [signed-by=/etc/apt/keyrings/kali-archive-keyring.gpg] http://http.kali.org/kali kali-rolling main contrib non-free non-free-firmware" > /etc/apt/sources.list
 ```
 
-Répondre `Y` si une confirmation est demandée. Si le fichier `.deb` est introuvable, la version a changé :
-prendre le lien du paquet Debian sur https://www.lernsoftware-filius.de/Herunterladen.
+Installer Java et git :
 
-</details>
+```bash
+apt-get update
+apt-get install -y default-jre git
+```
+
+Télécharger et installer Filius :
+
+```bash
+cd /tmp
+curl -L -O https://www.lernsoftware-filius.de/downloads/Setup/filius_2.14.0_all.deb
+apt-get install -y ./filius_2.14.0_all.deb
+```
+
+Si le fichier `.deb` est introuvable, la version a changé : prendre le lien du paquet Debian sur
+https://www.lernsoftware-filius.de/Herunterladen.
 
 Une fois l'installation terminée, cliquer sur **Applications** (icône en haut à gauche de la
 session Linux) puis lancer **Filius** depuis *All Applications* (ou rechercher « Filius » puis *Run*).
@@ -130,10 +126,11 @@ Puis dans Filius : **Ouvrir** → dossier `filius` de votre répertoire personne
 
 | Problème | Solution |
 |---|---|
-| L'onglet ne s'ouvre pas | Autoriser les popups pour `app.github.dev`, ou copier l'adresse affichée par le script. |
-| Erreur **502 Bad Gateway** | Vous êtes sur le port **6901** : utiliser l'adresse du port **6080** affichée par le script. |
-| « Page indisponible » | Relancer `bash scripts/start_kali.sh` (sans risque : il ne redémarre que ce qui est arrêté). |
-| Le script s'arrête sur « doit être lancé en root » | Taper `su` puis relancer la commande `curl … \| bash`. |
+| L'onglet ne s'ouvre pas | Autoriser les popups pour `app.github.dev`, ou onglet **PORTS** → 🌐 sur la ligne 6901. |
+| Erreur **502 Bad Gateway** | Le port est en HTTP : onglet **PORTS** → clic droit sur 6901 → *Change Port Protocol* → **HTTPS**. |
+| Le port 6901 n'apparaît pas | Kali n'a pas fini de démarrer : attendre, ou vérifier que la commande `docker run` tourne toujours. |
+| « Page indisponible » | Le terminal du `docker run` a été fermé : relancer la commande `docker run`. |
+| `apt-get` refuse de s'exécuter (permission) | Taper `su` puis relancer la commande. |
 | Filius n'apparaît pas dans *Applications* | Fermer puis rouvrir le menu *Applications*, ou rechercher « Filius ». |
 | Le `ping` échoue entre deux réseaux | Vérifier la **passerelle** de chaque machine (exercice 3, question 6). |
-| La session Kali a disparu | Le Codespace s'est mis en veille : relancer `bash scripts/start_kali.sh`, puis réinstaller Filius (étape 2). |
+| La session Kali a disparu | Le Codespace s'est mis en veille : relancer la commande `docker run`, puis réinstaller Filius (étape 2). |

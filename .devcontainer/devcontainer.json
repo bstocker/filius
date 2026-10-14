@@ -2,12 +2,10 @@
   "name": "Atelier Filius",
   "image": "mcr.microsoft.com/devcontainers/universal:2",
   "portsAttributes": {
-    "6080": {
-      "label": "Kali (Filius)",
-      "onAutoForward": "openBrowser"
-    },
     "6901": {
-      "onAutoForward": "ignore"
+      "label": "Kali (Filius)",
+      "protocol": "https",
+      "onAutoForward": "openBrowser"
     }
   }
 }
