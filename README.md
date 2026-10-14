@@ -16,11 +16,13 @@ routeur, routage, protocoles SMTP/POP3, couches TCP/IP) à l'aide du simulateur
 
 ```
 .
+├── .devcontainer/               ← configuration du Codespace (ouverture du port 6080)
 ├── README.md                    ← vous êtes ici
 ├── docs/
 │   └── Atelier_Filius.pdf       ← énoncé de l'atelier (5 exercices)
 ├── exercice4_ressources.fls     ← réseau de départ de l'exercice 4
 └── scripts/
+    ├── start_kali.sh            ← démarrage de la session Linux Kali
     └── install_filius.sh        ← installation de Filius dans la session Kali
 ```
 
@@ -30,17 +32,17 @@ routeur, routage, protocoles SMTP/POP3, couches TCP/IP) à l'aide du simulateur
 
 1. Faire un **fork** de ce dépôt (bouton *Fork* en haut à droite).
 2. Sur votre fork : **Code → Codespaces → Create codespace on main**.
-3. Dans le terminal du Codespace, coller la ligne suivante :
+3. Dans le terminal du Codespace, lancer la session Linux Kali :
 
    ```bash
-   docker run --rm -it --shm-size=512m --user root -p 6901:6901 -e VNC_PW=password kasmweb/core-kali-rolling:1.17.0
+   bash scripts/start_kali.sh
    ```
 
-4. Quand le démarrage est terminé (quelques minutes), ouvrir l'onglet **PORTS** du Codespace puis
-   ouvrir le port **6901** (attention aux bloqueurs de popup).
-5. La fenêtre affiche une erreur **502 Bad Gateway** : c'est normal. Ajouter `https://` devant
-   l'URL dans la barre d'adresse. Le navigateur signale un site non sécurisé, mais il est sans danger.
-6. Se connecter avec l'utilisateur `kasm_user` et le mot de passe `password`.
+   Le premier lancement prend quelques minutes (téléchargement de l'image Kali).
+4. Quand le script affiche **« Session Kali prête »**, ouvrir l'adresse indiquée (elle se termine
+   par `-6080.app.github.dev`). Le port **6080** peut aussi s'ouvrir tout seul dans un nouvel onglet
+   (attention aux bloqueurs de popup), ou depuis l'onglet **PORTS** → icône 🌐 sur la ligne 6080.
+5. Se connecter avec l'utilisateur `kasm_user` et le mot de passe `password`.
 
 ## 2. Installer Filius
 
@@ -127,9 +129,10 @@ Puis dans Filius : **Ouvrir** → dossier `filius` de votre répertoire personne
 
 | Problème | Solution |
 |---|---|
-| Le port 6901 ne s'ouvre pas | Autoriser les popups pour `github.dev` / `app.github.dev`. |
-| Erreur **502 Bad Gateway** | Ajouter `https://` devant l'URL du port 6901. |
+| L'onglet ne s'ouvre pas | Autoriser les popups pour `app.github.dev`, ou copier l'adresse affichée par le script. |
+| Erreur **502 Bad Gateway** | Vous êtes sur le port **6901** : utiliser l'adresse du port **6080** affichée par le script. |
+| « Page indisponible » | Relancer `bash scripts/start_kali.sh` (sans risque : il ne redémarre que ce qui est arrêté). |
 | Le script s'arrête sur « doit être lancé en root » | Taper `su` puis relancer la commande `curl … \| bash`. |
 | Filius n'apparaît pas dans *Applications* | Fermer puis rouvrir le menu *Applications*, ou rechercher « Filius ». |
 | Le `ping` échoue entre deux réseaux | Vérifier la **passerelle** de chaque machine (exercice 3, question 6). |
-| La session Kali a disparu | Le conteneur est supprimé quand le terminal du Codespace est fermé (`--rm`) : relancer l'étape 1 puis 2. |
+| La session Kali a disparu | Le Codespace s'est mis en veille : relancer `bash scripts/start_kali.sh`, puis réinstaller Filius (étape 2). |
