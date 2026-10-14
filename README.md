@@ -52,6 +52,9 @@ su
 
 Puis taper les commandes suivantes, une par une.
 
+> ⚠️ **Copier-coller dans le terminal Kali :** `Ctrl+V` ne fonctionne pas. Copier la commande
+> depuis cette page, puis faire un **clic droit** dans le terminal Kali → **Paste Clipboard**.
+
 Mettre à jour la clé du dépôt Kali :
 
 ```bash
@@ -130,6 +133,7 @@ Puis dans Filius : **Ouvrir** → dossier `filius` de votre répertoire personne
 | Erreur **502 Bad Gateway** | Le port est en HTTP : onglet **PORTS** → clic droit sur 6901 → *Change Port Protocol* → **HTTPS**. |
 | Le port 6901 n'apparaît pas | Kali n'a pas fini de démarrer : attendre, ou vérifier que la commande `docker run` tourne toujours. |
 | Écran noir avec seulement le panneau KasmVNC | Le bureau n'a pas démarré : arrêter Kali (`Ctrl+C`) et relancer la commande `docker run` **avec** l'option `--security-opt seccomp=unconfined`. |
+| `Ctrl+V` ne colle rien dans le terminal Kali | Faire un **clic droit** dans le terminal → **Paste Clipboard**. |
 | « Page indisponible » | Le terminal du `docker run` a été fermé : relancer la commande `docker run`. |
 | `apt-get` refuse de s'exécuter (permission) | Taper `su` puis relancer la commande. |
 | Filius n'apparaît pas dans *Applications* | Fermer puis rouvrir le menu *Applications*, ou rechercher « Filius ». |
